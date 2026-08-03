@@ -1,4 +1,4 @@
-# RiskDesk
+# RiskDesk - Florida Landfall Tracker
 
 A desktop application for identifying hurricanes that made landfall in Florida using NOAA HURDAT2 track data.
 
@@ -29,4 +29,3 @@ Landfalls will be inferred by detecting when a storm track crosses from water on
 - A storm must be classified as a hurricane when it crosses the Florida coastline.
 - Multiple Florida landfalls by the same hurricane are separate events.
 - Wind speed at landfall is the primary reported value.
-- Lifetime maximum sustained wind is included as supplemental context.
