@@ -33,8 +33,8 @@ public class HurdatParser
 
         trackPoint.Latitude = ParseCoordinate(fields[4]);
         trackPoint.Longitude = ParseCoordinate(fields[5]);
-  
-        
+
+
         trackPoint.MaxWindSpeedKnots = int.Parse(fields[6].Trim());
 
         return trackPoint;
@@ -42,17 +42,48 @@ public class HurdatParser
 
     private static double ParseCoordinate(string coordinateText)
     {
-        
+
         var trimmedCoordinate = coordinateText.Trim();
 
         var coordinateDirection = trimmedCoordinate[^1];
         var coordinateMagnitude = double.Parse(
             trimmedCoordinate[..^1],
             CultureInfo.InvariantCulture);
-        
+
         var isNegative = coordinateDirection == 'S' || coordinateDirection == 'W';
 
         return isNegative ? -coordinateMagnitude : coordinateMagnitude;
 
+    }
+
+    public List<Storm> ParseFile(string filePath)
+    {
+        var lines = File.ReadAllLines(filePath);
+        return ParseLines(lines);
+    }
+
+    public List<Storm> ParseLines(IReadOnlyList<string> lines)
+    {
+        var storms = new List<Storm>();
+        var fileIndex = 0;
+
+        while (fileIndex < lines.Count)
+        {
+            var storm = ParseHeader(lines[fileIndex]);
+
+            fileIndex++;
+
+            for (var observationIndex = 0;
+                observationIndex < storm.DeclaredObservationCount;
+                observationIndex++)
+            {
+                storm.TrackPoints.Add(ParseTrackPoint(lines[fileIndex]));
+                fileIndex++;
+            }
+
+            storms.Add(storm);
+        }
+
+        return storms;
     }
 }
