@@ -28,6 +28,36 @@
 
 import './index.css';
 
-console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack',
-);
+const button = document.querySelector('#load-landfalls');
+const summary = document.querySelector('#summary');
+const results = document.querySelector('#results');
+
+button?.addEventListener('click', async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:5202/api/landfalls');
+    const report = await response.json();
+    if (summary) {
+      summary.textContent =
+        `Storms analyzed: ${report.stormCount} | Florida landfalls: ${report.landfallCount}`;
+    }
+
+    if (results) {
+      results.textContent = report.events
+        .map(
+          (event: {
+            stormName: string;
+            landfallTimeUtc: string;
+            landfallWindSpeedKnots: number;
+          }) =>
+            `${event.stormName} — ${event.landfallTimeUtc} — ${event.landfallWindSpeedKnots} kt`,
+        )
+        .join('\n');
+    }
+
+    console.log(report);
+  } catch (error) {
+    console.error('Could not load landfalls:', error);
+  }
+
+});
+

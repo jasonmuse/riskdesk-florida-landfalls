@@ -35,7 +35,7 @@ public class HurdatParser
         trackPoint.Longitude = ParseCoordinate(fields[5]);
 
 
-        trackPoint.MaxWindSpeedKnots = int.Parse(fields[6].Trim());
+        trackPoint.MaxSustainedWindKnots = int.Parse(fields[6].Trim());
 
         return trackPoint;
     }

@@ -31,7 +31,7 @@ public class HurdatParserTests
         Assert.Equal("HU", trackPoint.Status);
         Assert.Equal(28.0, trackPoint.Latitude);
         Assert.Equal(-94.8, trackPoint.Longitude);
-        Assert.Equal(80, trackPoint.MaxWindSpeedKnots);
+        Assert.Equal(80, trackPoint.MaxSustainedWindKnots);
     }
 
     [Fact]
@@ -72,5 +72,32 @@ public class HurdatParserTests
         Assert.Equal("AL022000", storms[1].Id);
         Assert.Single(storms[1].TrackPoints);
     }
+
+    [Fact]
+    public void ParseFile_RealDataset_ParsesAllDeclaredObservations()
+    {
+        var filePath = Path.GetFullPath(
+            Path.Combine(
+                AppContext.BaseDirectory,
+                "../../../../Data/hurdat2-1851-2025-02272026.txt"));
+
+        var parser = new HurdatParser();
+        var storms = parser.ParseFile(filePath);
+
+        Assert.NotEmpty(storms);
+
+        foreach (var storm in storms)
+        {
+            Assert.Equal(
+                storm.DeclaredObservationCount,
+                storm.TrackPoints.Count);
+        }
+
+        Assert.Equal("AL011851", storms[0].Id);
+        Assert.Equal(14, storms[0].TrackPoints.Count);
+        Assert.Equal(
+            new DateTimeOffset(1851, 6, 25, 0, 0, 0, TimeSpan.Zero),
+            storms[0].TrackPoints[0].TimestampUtc);
+            }
 
 }

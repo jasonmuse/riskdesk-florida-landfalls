@@ -1,13 +1,22 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello World!</title>
 
-  </head>
-  <body>
-    <h1>RiskDesk</h1>
-    <p>Welcome to your property loss insurance calculation application.</p>
-    <button>Calculate Loss</button>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Florida Hurricane Landfall Event Tracker</title>
+
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-eval'; connect-src 'self' http://127.0.0.1:5202 ws://localhost:3000; style-src 'self' 'unsafe-inline';" />
+
+</head>
+
+<body>
+  <h1>Florida Hurricane Landfall Event Tracker</h1>
+  <p>Uses the NOAA Best Track Data (HURDAT2) to identify all hurricanes that have made landfall in Florida
+    since 1900.</p>
+  <button id="load-landfalls">Load Florida Landfalls</button>
+  <div id="summary"></div>
+  <div id="results"></div>
+</body>
+
 </html>

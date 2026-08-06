@@ -13,6 +13,7 @@ export const rendererConfig: Configuration = {
     rules,
   },
   plugins,
+  
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },
