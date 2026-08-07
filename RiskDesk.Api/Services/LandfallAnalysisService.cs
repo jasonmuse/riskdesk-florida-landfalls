@@ -13,11 +13,13 @@ public class LandfallAnalysisService
     }
     public LandfallReport GetReport()
     {
+        // Reuse the report after the first request instead of parsing the dataset again.
         if (_cachedReport is not null)
         {
             return _cachedReport;
         }
 
+        // Run the analysis pipeline once: parse, load the boundary, then detect events.
         var parser = new HurdatParser();
         var hurdatPath = Path.Combine(
             _dataDirectory,

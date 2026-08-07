@@ -11,7 +11,16 @@
 </head>
 
 <body>
-  <h1>Florida Hurricane Landfall Event Tracker</h1>
+  <div class="radar" aria-hidden="true">
+    <span class="radar-point point-one"></span>
+    <span class="radar-point point-two"></span>
+    <span class="radar-point point-three"></span>
+  </div>
+
+  <h1 class="app-title">
+    <span class="app-title-mark" aria-hidden="true"></span>
+    <span class="app-title-text">Florida Hurricane Landfall Event Tracker</span>
+  </h1>
   <p>Uses the NOAA Best Track Data (HURDAT2) to identify all hurricanes that have made landfall in Florida
     since 1900.</p>
 
@@ -21,21 +30,35 @@
   <div id="summary">
     <div class="summary-card">
       <span class="summary-label">Storms analyzed</span>
-      <strong id="storm-count">—</strong>
+      <strong id="storm-count">-</strong>
 
       <span class="summary-label">Florida Landfalls</span>
-      <strong id="landfall-count">—</strong>
+      <strong id="landfall-count">-</strong>
     </div>
   </div>
 
   <section id="results" hidden>
+    <div class="results-heading">
+      <div>
+        <h2>Florida landfall events</h2>
+        <p class="methodology-note">Landfalls are inferred when the center of a hurricane crosses Florida's boundary.</p>
+      </div>
+
+      <label class="filter-control" for="storm-filter">
+        <span>Find a storm</span>
+        <input id="storm-filter" type="search" placeholder="Search by storm name" autocomplete="off" />
+      </label>
+    </div>
+
+    <p id="visible-count" class="visible-count"></p>
+
     <table>
       <thead>
         <tr>
-          <th>Storm</th>
-          <th>Landfall date</th>
-          <th>Landfall wind</th>
-          <th>Max Florida wind</th>
+          <th><button class="sort-button" data-sort-key="stormName" data-sort-label="storm" type="button">Storm</button></th>
+          <th><button class="sort-button" data-sort-key="landfallTimeUtc" data-sort-label="landfall date" type="button">Landfall date</button></th>
+          <th><button class="sort-button" data-sort-key="landfallWindSpeedKnots" data-sort-label="landfall wind" type="button">Landfall wind</button></th>
+          <th><button class="sort-button" data-sort-key="maxFloridaWindSpeedKnots" data-sort-label="maximum Florida wind" type="button">Max Florida wind</button></th>
         </tr>
       </thead>
       <tbody id="results-body"></tbody>

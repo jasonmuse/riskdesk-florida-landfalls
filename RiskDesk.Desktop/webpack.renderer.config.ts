@@ -13,7 +13,7 @@ export const rendererConfig: Configuration = {
     rules,
   },
   plugins,
-  
+  externalsPresets: { electronRenderer: true },
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },

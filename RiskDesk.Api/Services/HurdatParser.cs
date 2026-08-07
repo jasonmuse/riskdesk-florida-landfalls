@@ -7,6 +7,7 @@ public class HurdatParser
 {
     public Storm ParseHeader(string headerLine)
     {
+        // Split the header into the storm ID, name, and observation count.
         var fields = headerLine.Split(',');
         var storm = new Storm();
 
@@ -19,6 +20,7 @@ public class HurdatParser
 
     public TrackPoint ParseTrackPoint(string observationLine)
     {
+        // Split one HURDAT2 observation into its individual fields.
         var fields = observationLine.Split(',');
         var trackPoint = new TrackPoint();
 
@@ -42,7 +44,7 @@ public class HurdatParser
 
     private static double ParseCoordinate(string coordinateText)
     {
-
+        // Convert the HURDAT2 direction suffix into a signed coordinate.
         var trimmedCoordinate = coordinateText.Trim();
 
         var coordinateDirection = trimmedCoordinate[^1];
@@ -58,6 +60,7 @@ public class HurdatParser
 
     public List<Storm> ParseFile(string filePath)
     {
+        // Read the source file and pass its lines to the record parser.
         var lines = File.ReadAllLines(filePath);
         return ParseLines(lines);
     }
@@ -67,6 +70,7 @@ public class HurdatParser
         var storms = new List<Storm>();
         var fileIndex = 0;
 
+        // Each header tells us how many observation lines belong to that storm.
         while (fileIndex < lines.Count)
         {
             var storm = ParseHeader(lines[fileIndex]);
