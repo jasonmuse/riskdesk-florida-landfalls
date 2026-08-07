@@ -1,12 +1,94 @@
 body {
+  background: #f4f7fb;
+  color: #172033;
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
     sans-serif;
-  margin: auto;
-  max-width: 38rem;
+  margin: 0 auto;
+  max-width: 72rem;
   padding: 2rem;
 }
 
-#results {
-  white-space: pre-line;
+h1 {
+  margin-bottom: 0.5rem;
+}
+
+button {
+  background: #1d5fd1;
+  border: 0;
+  border-radius: 0.5rem;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+#error-message {
+  background: #fff0f0;
+  border: 1px solid #e0a0a0;
+  border-radius: 0.5rem;
+  color: #8a1f1f;
+  margin-top: 1rem;
+  padding: 0.75rem;
+}
+
+#summary {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.summary-card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  display: flex;
+  flex-direction: column;
+  min-width: 12rem;
+  padding: 1rem;
+}
+
+.summary-label {
+  color: #65708a;
+  font-size: 0.85rem;
+}
+
+#results[hidden] {
+  display: none;
+}
+
+table {
+  background: white;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #dbe2ee;
+  border-right: 1px solid #e4e9f2;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+th:last-child,
+td:last-child {
+  border-right: 0;
+}
+
+th {
+  background: #e9effa;
+}
+
+tbody tr.storm-group-even {
+  background: #ffffff;
+}
+
+tbody tr.storm-group-odd {
+  background: #f3f7fd;
 }

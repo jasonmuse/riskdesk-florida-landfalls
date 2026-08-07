@@ -14,9 +14,34 @@
   <h1>Florida Hurricane Landfall Event Tracker</h1>
   <p>Uses the NOAA Best Track Data (HURDAT2) to identify all hurricanes that have made landfall in Florida
     since 1900.</p>
+
   <button id="load-landfalls">Load Florida Landfalls</button>
-  <div id="summary"></div>
-  <div id="results"></div>
+  <p id="error-message" role="alert" hidden></p>
+
+  <div id="summary">
+    <div class="summary-card">
+      <span class="summary-label">Storms analyzed</span>
+      <strong id="storm-count">—</strong>
+
+      <span class="summary-label">Florida Landfalls</span>
+      <strong id="landfall-count">—</strong>
+    </div>
+  </div>
+
+  <section id="results" hidden>
+    <table>
+      <thead>
+        <tr>
+          <th>Storm</th>
+          <th>Landfall date</th>
+          <th>Landfall wind</th>
+          <th>Max Florida wind</th>
+        </tr>
+      </thead>
+      <tbody id="results-body"></tbody>
+    </table>
+  </section>
+
 </body>
 
 </html>
