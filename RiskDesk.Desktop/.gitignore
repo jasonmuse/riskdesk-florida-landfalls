@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+build-resources/
+dist/
+dist-final/
