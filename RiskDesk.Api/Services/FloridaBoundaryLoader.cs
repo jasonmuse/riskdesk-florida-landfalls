@@ -1,6 +1,7 @@
 using NetTopologySuite.Features;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using NetTopologySuite.Operation.Union;
 
 
 namespace RiskDesk.Api.Services;
@@ -21,6 +22,16 @@ public class FloridaBoundaryLoader
 
         return geometry;
 
+    }
+
+    public Geometry LoadCombined(string filePath)
+    {
+        var geoJson = File.ReadAllText(filePath);
+        var reader = new GeoJsonReader();
+        var featureCollection = reader.Read<FeatureCollection>(geoJson);
+
+        return UnaryUnionOp.Union(
+            featureCollection.Select(feature => feature.Geometry));
     }
     
 }

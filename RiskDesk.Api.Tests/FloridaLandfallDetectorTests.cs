@@ -157,6 +157,66 @@ public class FloridaLandfallDetectorTests
     }
 
     [Fact]
+    public void DetectsStrengtheningStormAtHurricaneWindCrossing()
+    {
+        var storm = CreateTwoPointStorm("TS", 60, "HU", 70);
+
+        var events = new FloridaLandfallDetector().Detect(
+            [storm],
+            CreateTestBoundary());
+
+        var landfallEvent = Assert.Single(events);
+        Assert.Equal(70, landfallEvent.LandfallWindSpeedKnots);
+    }
+
+    [Fact]
+    public void DetectsWeakeningStormAtHurricaneWindCrossing()
+    {
+        var storm = CreateTwoPointStorm("HU", 70, "TS", 60);
+
+        var events = new FloridaLandfallDetector().Detect(
+            [storm],
+            CreateTestBoundary());
+
+        var landfallEvent = Assert.Single(events);
+        Assert.Equal(70, landfallEvent.LandfallWindSpeedKnots);
+    }
+
+    [Fact]
+    public void UsesHurricaneObservationWhenStatusChangesAcrossBoundary()
+    {
+        var storm = CreateTwoPointStorm("TS", 55, "HU", 65);
+
+        var events = new FloridaLandfallDetector().Detect(
+            [storm],
+            CreateTestBoundary());
+
+        var landfallEvent = Assert.Single(events);
+        Assert.Equal(65, landfallEvent.LandfallWindSpeedKnots);
+    }
+
+    [Fact]
+    public void IgnoresTrackEnteringFloridaThroughAdjacentStateLand()
+    {
+        var adjacentStateLand = new GeometryFactory().CreatePolygon(new[]
+        {
+            new Coordinate(-86, 24),
+            new Coordinate(-83, 24),
+            new Coordinate(-83, 31),
+            new Coordinate(-86, 31),
+            new Coordinate(-86, 24)
+        });
+        var storm = CreateTwoPointStorm("HU", 80, "HU", 85);
+
+        var events = new FloridaLandfallDetector().Detect(
+            [storm],
+            CreateTestBoundary(),
+            adjacentStateLand);
+
+        Assert.Empty(events);
+    }
+
+    [Fact]
     public void IgnoresTrackThatOnlyTouchesBoundary()
     {
         var boundary = new GeometryFactory().CreatePolygon(new[]
@@ -198,6 +258,41 @@ public class FloridaLandfallDetectorTests
         var events = detector.Detect(new List<Storm> { storm }, boundary);
 
         Assert.Empty(events);
+    }
+
+    [Fact]
+    public void DetectsRoundedTrackWithinCoastlineTolerance()
+    {
+        var boundary = CreateTestBoundary();
+        var storm = new Storm
+        {
+            Id = "TOLERANCE01",
+            Name = "TOLERANCE",
+            DeclaredObservationCount = 2,
+            TrackPoints =
+            [
+                new TrackPoint
+                {
+                    TimestampUtc = new DateTimeOffset(2022, 9, 1, 0, 0, 0, TimeSpan.Zero),
+                    Status = "HU",
+                    Latitude = 23.99,
+                    Longitude = -84,
+                    MaxSustainedWindKnots = 80
+                },
+                new TrackPoint
+                {
+                    TimestampUtc = new DateTimeOffset(2022, 9, 1, 6, 0, 0, 0, TimeSpan.Zero),
+                    Status = "HU",
+                    Latitude = 23.99,
+                    Longitude = -82,
+                    MaxSustainedWindKnots = 80
+                }
+            ]
+        };
+
+        var events = new FloridaLandfallDetector().Detect([storm], boundary);
+
+        Assert.Single(events);
     }
 
     [Fact]
@@ -371,9 +466,14 @@ public class FloridaLandfallDetectorTests
 
         var storms = new HurdatParser().ParseFile(hurdatPath);
         var boundary = new FloridaBoundaryLoader().Load(boundaryPath);
-        var events = new FloridaLandfallDetector().Detect(storms, boundary);
+        var adjacentStateLand = new FloridaBoundaryLoader().LoadCombined(
+            Path.Combine(dataDirectory, "florida-adjacent-states.geojson"));
+        var events = new FloridaLandfallDetector().Detect(
+            storms,
+            boundary,
+            adjacentStateLand);
 
-        Assert.Equal(94, events.Count);
+        Assert.Equal(104, events.Count);
         Assert.Contains(events, landfallEvent =>
             landfallEvent.StormName == "ANDREW" &&
             landfallEvent.LandfallWindSpeedKnots == 145);
@@ -383,6 +483,17 @@ public class FloridaLandfallDetectorTests
         Assert.Contains(events, landfallEvent =>
             landfallEvent.StormName == "MICHAEL" &&
             landfallEvent.LandfallWindSpeedKnots == 140);
+        Assert.Contains(events, landfallEvent =>
+            landfallEvent.StormName == "ELOISE" &&
+            landfallEvent.LandfallWindSpeedKnots == 110);
+        Assert.Contains(events, landfallEvent =>
+            landfallEvent.StormName == "AGNES" &&
+            landfallEvent.LandfallWindSpeedKnots == 65);
+        Assert.Contains(events, landfallEvent =>
+            landfallEvent.StormName == "NICOLE" &&
+            landfallEvent.LandfallWindSpeedKnots == 65);
+        Assert.DoesNotContain(events, landfallEvent =>
+            landfallEvent.StormName == "SALLY");
         var ianWinds = events
             .Where(landfallEvent => landfallEvent.StormName == "IAN")
             .Select(landfallEvent => landfallEvent.LandfallWindSpeedKnots)
@@ -390,6 +501,7 @@ public class FloridaLandfallDetectorTests
         Assert.True(
             ianWinds.Any(wind => Math.Abs(wind - 130) <= 1),
             $"Expected a 130 kt Ian landfall, but found: {string.Join(", ", ianWinds)}");
+        Assert.Contains(110, ianWinds);
         var miltonWinds = events
             .Where(landfallEvent => landfallEvent.StormName == "MILTON")
             .Select(landfallEvent => landfallEvent.LandfallWindSpeedKnots)
@@ -397,6 +509,51 @@ public class FloridaLandfallDetectorTests
         Assert.True(
             miltonWinds.Any(wind => Math.Abs(wind - 100) <= 1),
             $"Expected a 100 kt Milton landfall, but found: {string.Join(", ", miltonWinds)}");
+    }
+
+    private static Polygon CreateTestBoundary()
+    {
+        return new GeometryFactory().CreatePolygon(new[]
+        {
+            new Coordinate(-83, 24),
+            new Coordinate(-80, 24),
+            new Coordinate(-80, 31),
+            new Coordinate(-83, 31),
+            new Coordinate(-83, 24)
+        });
+    }
+
+    private static Storm CreateTwoPointStorm(
+        string startStatus,
+        int startWind,
+        string endStatus,
+        int endWind)
+    {
+        return new Storm
+        {
+            Id = "MIXED01",
+            Name = "MIXED",
+            DeclaredObservationCount = 2,
+            TrackPoints =
+            [
+                new TrackPoint
+                {
+                    TimestampUtc = new DateTimeOffset(2022, 9, 1, 0, 0, 0, TimeSpan.Zero),
+                    Status = startStatus,
+                    Latitude = 27,
+                    Longitude = -84,
+                    MaxSustainedWindKnots = startWind
+                },
+                new TrackPoint
+                {
+                    TimestampUtc = new DateTimeOffset(2022, 9, 1, 6, 0, 0, 0, TimeSpan.Zero),
+                    Status = endStatus,
+                    Latitude = 27,
+                    Longitude = -82,
+                    MaxSustainedWindKnots = endWind
+                }
+            ]
+        };
     }
 
 }

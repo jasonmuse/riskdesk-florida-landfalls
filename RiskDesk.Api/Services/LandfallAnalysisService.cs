@@ -27,12 +27,19 @@ public class LandfallAnalysisService
         var boundaryPath = Path.Combine(
             _dataDirectory,
             "florida.geojson");
+        var adjacentStatesPath = Path.Combine(
+            _dataDirectory,
+            "florida-adjacent-states.geojson");
 
         var storms = parser.ParseFile(hurdatPath);
         var loader = new FloridaBoundaryLoader();
         var boundary = loader.Load(boundaryPath);
+        var adjacentStateLand = loader.LoadCombined(adjacentStatesPath);
         var detector = new FloridaLandfallDetector();
-        var events = detector.Detect(storms, boundary);
+        var events = detector.Detect(
+            storms,
+            boundary,
+            adjacentStateLand);
 
         _cachedReport = new LandfallReport
         {

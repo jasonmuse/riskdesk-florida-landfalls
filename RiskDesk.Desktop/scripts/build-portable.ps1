@@ -29,6 +29,10 @@ Copy-Item `
     -LiteralPath (Join-Path $repositoryDirectory 'Data\florida.geojson') `
     -Destination $dataOutput `
     -Force
+Copy-Item `
+    -LiteralPath (Join-Path $repositoryDirectory 'Data\florida-adjacent-states.geojson') `
+    -Destination $dataOutput `
+    -Force
 
 Push-Location $desktopDirectory
 
