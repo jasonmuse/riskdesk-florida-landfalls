@@ -157,6 +157,50 @@ public class FloridaLandfallDetectorTests
     }
 
     [Fact]
+    public void IgnoresTrackThatOnlyTouchesBoundary()
+    {
+        var boundary = new GeometryFactory().CreatePolygon(new[]
+        {
+            new Coordinate(-83, 24),
+            new Coordinate(-80, 24),
+            new Coordinate(-80, 31),
+            new Coordinate(-83, 31),
+            new Coordinate(-83, 24)
+        });
+
+        var storm = new Storm
+        {
+            Id = "TEST07",
+            Name = "TEST7",
+            DeclaredObservationCount = 2,
+            TrackPoints =
+            [
+                new TrackPoint
+                {
+                    TimestampUtc = new DateTimeOffset(2022, 9, 1, 0, 0, 0, TimeSpan.Zero),
+                    Status = "HU",
+                    Latitude = 30,
+                    Longitude = -84,
+                    MaxSustainedWindKnots = 80
+                },
+                new TrackPoint
+                {
+                    TimestampUtc = new DateTimeOffset(2022, 9, 1, 6, 0, 0, TimeSpan.Zero),
+                    Status = "HU",
+                    Latitude = 32,
+                    Longitude = -82,
+                    MaxSustainedWindKnots = 85
+                }
+            ]
+        };
+
+        var detector = new FloridaLandfallDetector();
+        var events = detector.Detect(new List<Storm> { storm }, boundary);
+
+        Assert.Empty(events);
+    }
+
+    [Fact]
     public void DetectsTwoSeparateLandfallsForOneStorm()
     {
         var boundary = new GeometryFactory().CreatePolygon(new[]
@@ -329,6 +373,7 @@ public class FloridaLandfallDetectorTests
         var boundary = new FloridaBoundaryLoader().Load(boundaryPath);
         var events = new FloridaLandfallDetector().Detect(storms, boundary);
 
+        Assert.Equal(94, events.Count);
         Assert.Contains(events, landfallEvent =>
             landfallEvent.StormName == "ANDREW" &&
             landfallEvent.LandfallWindSpeedKnots == 145);

@@ -2,6 +2,8 @@
 
 A desktop application for identifying hurricanes that made landfall in Florida using NOAA HURDAT2 track data.
 
+![Florida Hurricane Landfall Event Tracker showing the completed landfall report](Data/screenshot.png)
+
 ## Purpose
 
 The application parses HURDAT2 storm records, identifies inferred Florida hurricane landfalls from 1900 onward, and presents the results in a desktop interface. Each result includes the storm name, inferred landfall date, interpolated landfall wind, and the highest qualifying hurricane wind found while the storm remains over Florida.
@@ -35,6 +37,17 @@ The HURDAT2 `L` landfall indicator is intentionally not used. A landfall is infe
 Events before 1900 are excluded. Multiple crossings by the same storm remain separate report entries.
 The interpolated landfall wind is the primary value. The detector also scans later observations while the storm remains over Florida and classified as a hurricane, so a higher inland wind can be reported separately when present.
 
+## Design Decisions
+
+- Both observations surrounding a crossing must use the HURDAT2 `HU` status. This avoids guessing that a status change happened before or after the inferred crossing.
+- Landfall time and wind are linearly interpolated because HURDAT2 normally records track points at six-hour intervals rather than at the exact coastline crossing.
+- Separate entries into Florida are reported as separate landfall events because one storm can leave the state and later make another Florida landfall.
+- Latitude and longitude are interpolated directly for this exercise. The short distance between neighboring track observations makes this accurate enough for identifying an inferred coastline crossing without adding a more complicated geodesic calculation.
+
+## Expected Result
+
+Using the included data files, the application analyzes 2,004 storms and reports 94 Florida hurricane landfall events. These counts provide a quick way to confirm that the same dataset and analysis rules were used.
+
 ## Technology
 
 - C# and ASP.NET Core for parsing, business logic, caching, and the API
@@ -43,6 +56,12 @@ The interpolated landfall wind is the primary value. The detector also scans lat
 - xUnit for automated tests
 - NOAA HURDAT2 for hurricane-track data
 - U.S. Census cartographic boundary data for the Florida geometry
+
+## Data Sources
+
+- [NOAA Atlantic HURDAT2 data](https://www.nhc.noaa.gov/data/) covering 1851–2025 and updated February 27, 2026. The included file is `Data/hurdat2-1851-2025-02272026.txt`.
+- [NOAA HURDAT2 format specification](https://www.nhc.noaa.gov/data/hurdat/hurdat2-format-atl-1851-2021.pdf), which documents storm headers, track observations, status codes, coordinates, and wind fields.
+- [U.S. Census Bureau 2025 TIGER/Line state boundaries](https://www.census.gov/geographies/mapping-files/2025/geo/tiger-line-file.html). The Florida feature was exported to `Data/florida.geojson` for the spatial analysis.
 
 ## Running the Application
 

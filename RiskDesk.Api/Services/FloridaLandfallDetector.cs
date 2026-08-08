@@ -43,7 +43,9 @@ public class FloridaLandfallDetector
 
                 // Covers includes points directly on the coastline boundary.
                 var startsOutside = !floridaBoundary.Covers(startLocation);
-                var crossesIntoFlorida = segment.Intersects(floridaBoundary);
+                // Crosses requires the track to enter Florida instead of only
+                // touching the coastline at one point.
+                var crossesIntoFlorida = segment.Crosses(floridaBoundary);
 
                 var isHurricaneAtCrossing =
                     start.Status == "HU" && end.Status == "HU";
