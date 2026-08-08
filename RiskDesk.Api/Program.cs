@@ -29,5 +29,7 @@ app.MapGet("/api/landfalls", (LandfallAnalysisService analysisService) =>
     return Results.Ok(report);
 });
 
+app.MapGet("/api/health", () => Results.Ok());
+
 
 app.Run();

@@ -2,7 +2,7 @@
 
 A desktop application for identifying hurricanes that made landfall in Florida using NOAA HURDAT2 track data.
 
-![Florida Hurricane Landfall Event Tracker showing the completed landfall report](Data/screenshot.png)
+![Florida Hurricane Landfall Event Tracker showing the completed landfall report](docs/screenshot.png)
 
 ## Purpose
 
@@ -63,6 +63,10 @@ Using the included data files, the application analyzes 2,004 storms and reports
 - [NOAA HURDAT2 format specification](https://www.nhc.noaa.gov/data/hurdat/hurdat2-format-atl-1851-2021.pdf), which documents storm headers, track observations, status codes, coordinates, and wind fields.
 - [U.S. Census Bureau 2025 TIGER/Line state boundaries](https://www.census.gov/geographies/mapping-files/2025/geo/tiger-line-file.html). The Florida feature was exported to `Data/florida.geojson` for the spatial analysis.
 
+## Portable Windows Download
+
+For the easiest way to run the application, download `FloridaLandfallDetector-1.0.0-portable.exe` from the [latest GitHub Release](https://github.com/jasonmuse/riskdesk-florida-landfalls/releases/latest). The portable application requires no installation, Node.js, or .NET SDK.
+
 ## Running the Application
 
 From the repository root, start the API:
@@ -79,6 +83,20 @@ npm start
 ```
 
 Click **Load Florida Landfalls** in the desktop window.
+
+## Building the Portable Windows Application
+
+The portable build includes Electron, a self-contained ASP.NET Core API, and both source data files in one executable. It does not require installation, Node.js, or the .NET SDK on the computer that runs it.
+
+From the `RiskDesk.Desktop` directory, run:
+
+```powershell
+npm run make:portable
+```
+
+Close any running Electron development window before starting the portable build so it does not lock the generated Webpack files.
+
+The finished `FloridaLandfallDetector-1.0.0-portable.exe` file is written to `RiskDesk.Desktop/dist`.
 
 ## Testing
 
