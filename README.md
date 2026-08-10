@@ -68,7 +68,7 @@ Using the included data files, the application analyzes 2,004 storms and reports
 
 ## Portable Windows Download
 
-For the easiest way to run the application, download `FloridaLandfallDetector-1.0.0-portable.exe` from the [latest GitHub Release](https://github.com/jasonmuse/riskdesk-florida-landfalls/releases/latest). The portable application requires no installation, Node.js, or .NET SDK.
+For the easiest way to run the application, download `FloridaLandfallDetector-1.0.2-portable.exe` from the [latest GitHub Release](https://github.com/jasonmuse/riskdesk-florida-landfalls/releases/latest). The portable application requires no installation, Node.js, or .NET SDK.
 
 ## Running the Application
 
@@ -99,7 +99,7 @@ npm run make:portable
 
 Close any running Electron development window before starting the portable build so it does not lock the generated Webpack files.
 
-The finished `FloridaLandfallDetector-1.0.0-portable.exe` file is written to `RiskDesk.Desktop/dist`.
+The finished `FloridaLandfallDetector-1.0.2-portable.exe` file is written to `RiskDesk.Desktop/dist`.
 
 ## Testing
 

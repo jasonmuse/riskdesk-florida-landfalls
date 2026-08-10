@@ -1,7 +1,7 @@
 {
   "name": "riskdesk.desktop",
   "productName": "Florida Hurricane Landfall Event Tracker",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A desktop report of inferred Florida hurricane landfalls from NOAA HURDAT2 data.",
   "main": ".webpack/main",
   "private": true,
